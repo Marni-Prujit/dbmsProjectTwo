@@ -16,12 +16,10 @@ const Login = () => {
           <FormLabel>Email address</FormLabel>
           <Input type="email" size="lg" />
         </FormControl>
-
         <FormControl id="email" isRequired my="6">
           <FormLabel>Password</FormLabel>
           <Input type="password" size="lg" />
         </FormControl>
-
         <Button colorScheme="teal" variant="solid">
           Login
         </Button>

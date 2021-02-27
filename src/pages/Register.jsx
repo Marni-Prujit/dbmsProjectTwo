@@ -7,33 +7,19 @@ import {
   Container,
   Button,
   FormErrorMessage,
+  useToast,
 } from '@chakra-ui/react';
+import { useHistory } from 'react-router-dom';
 
 import { auth } from '../firebase';
+import { validateEmailAndPassword } from '../utils/validators';
 
 const Register = () => {
+  const toast = useToast();
+  const history = useHistory();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
-
-  const validateEmailAndPassword = (email, password) => {
-    const errors = {};
-    // Empty errors checking
-    if (email.trim() === '') errors.email = 'Email cannot be empty';
-    if (password.trim() === '') errors.password = 'Password cannot be empty';
-    if (Object.keys(errors).length > 0) return errors;
-
-    // email checking
-    var mailformat = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (!email.match(mailformat)) {
-      errors.email = 'Invalid email';
-    }
-    // password checking
-    if (password.length < 6) {
-      errors.password = 'Password must be atleast 6 characters';
-    }
-    return errors;
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,15 +34,27 @@ const Register = () => {
       .createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         // Signed in
-        var user = userCredential.user;
-        console.log(user);
-        // ...
+        // const user = userCredential.user;
+        toast({
+          title: 'Account created.',
+          description: "We've created your account for you.",
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        history.push('/');
       })
       .catch((error) => {
-        // var errorCode = error.code;
-        // var errorMessage = error.message;
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
         console.log('error happened');
-        // ..
+        toast({
+          title: 'An error occurred.',
+          description: 'Unable to create user account.',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
       });
   };
 
