@@ -46,11 +46,9 @@ const Register = () => {
       })
       .catch((error) => {
         // const errorCode = error.code;
-        // const errorMessage = error.message;
-        console.log('error happened');
+        // const errorMessage = error.message
         toast({
-          title: 'An error occurred.',
-          description: 'Unable to create user account.',
+          title: 'Registration failed, try again',
           status: 'error',
           duration: 5000,
           isClosable: true,

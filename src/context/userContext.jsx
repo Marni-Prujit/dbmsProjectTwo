@@ -14,16 +14,23 @@ export const useGetUser = () => useContext(UserContext);
 
 export const initialState = {
   user: null,
+  isAuthenticated: false,
 };
 
-const reducer = (state, action) => {
-  console.log(action);
-  switch (action.type) {
+export const userReducer = (state, { type, payload }) => {
+  console.log('ACTION FIRED');
+  console.log({ type, payload });
+  switch (type) {
     case 'SET_USER':
-      return { ...state, user: action.payload };
+      return {
+        ...state,
+        user: payload.user,
+        isAuthenticated: payload.isAuthenticated,
+      };
+
+    case 'REMOVE_USER':
+      return { ...state, user: null, isAuthenticated: false };
     default:
       return state;
   }
 };
-
-export default reducer;

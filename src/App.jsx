@@ -6,17 +6,28 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import { useGetUser } from './context/userContext';
 
 const App = () => {
+  const [, dispatch] = useGetUser();
   useEffect(() => {
     auth.onAuthStateChanged((user) => {
       if (user) {
-        console.log(user);
+        const authUser = {
+          uid: user.uid,
+          username: user.displayName,
+          email: user.email,
+        };
+        const payload = { user: authUser, isAuthenticated: true };
+        dispatch({
+          type: 'SET_USER',
+          payload,
+        });
       } else {
-        console.log('no user so user is signed out');
+        dispatch({ type: 'REMOVE_USER' });
       }
     });
-  }, []);
+  }, [dispatch]);
   return (
     <div>
       <Navbar />
