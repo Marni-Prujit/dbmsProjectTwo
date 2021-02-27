@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -8,11 +8,13 @@ import {
   Button,
   FormErrorMessage,
   useToast,
+  Heading,
 } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 
 import { auth } from '../firebase';
 import { validateEmailAndPassword } from '../utils/validators';
+import { useGetUser } from '../context/userContext';
 
 const Register = () => {
   const toast = useToast();
@@ -20,6 +22,12 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
+
+  const [{ user }] = useGetUser();
+
+  useEffect(() => {
+    if (user) history.push('/');
+  }, [user, history]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -58,7 +66,10 @@ const Register = () => {
 
   return (
     <Box height="90vh" display="flex">
-      <Container height="fit-content" p="10" mt="5">
+      <Container height="fit-content" p="10">
+        <Heading textAlign="center" color="gray.600" my="6" size="3xl">
+          SignUp
+        </Heading>
         <FormControl id="email" isRequired my="6" isInvalid={errors.email}>
           <FormLabel>Email address</FormLabel>
           <Input
@@ -94,7 +105,7 @@ const Register = () => {
           onClick={handleSubmit}
           loadingText="Submitting"
         >
-          SignUp
+          Submit
         </Button>
       </Container>
     </Box>

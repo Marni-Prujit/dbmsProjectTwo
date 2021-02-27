@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 
-import './index.css';
 import { initialState, userReducer, UserProvider } from './context/userContext';
 import App from './App';
 

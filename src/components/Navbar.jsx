@@ -7,9 +7,7 @@ import { useGetUser } from '../context/userContext';
 
 const Navbar = () => {
   const toast = useToast();
-  const [{ user, isAuthenticated }] = useGetUser();
-
-  console.log('the user is: ', user, isAuthenticated);
+  const [{ isAuthenticated }] = useGetUser();
 
   const handleLogout = async () => {
     try {
@@ -24,18 +22,18 @@ const Navbar = () => {
       toast({
         title: 'Something went wrong',
         status: 'error',
-        duration: 5000,
+        duration: 2000,
         isClosable: true,
       });
     }
   };
 
   return (
-    <Box bg="blackAlpha.200">
+    <Box bg="blackAlpha.100">
       <Flex width="90%" margin="auto">
         <Box p="2">
-          <Heading size="lg" color="teal.800" as={Link} to="/">
-            DBMS Project 2
+          <Heading size="lg" color="orange.400" as={Link} to="/">
+            DBMS
           </Heading>
         </Box>
         <Spacer />

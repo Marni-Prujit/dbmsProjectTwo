@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -8,11 +8,13 @@ import {
   Button,
   useToast,
   FormErrorMessage,
+  Heading,
 } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 
 import { auth } from '../firebase';
 import { validateEmailAndPassword } from '../utils/validators';
+import { useGetUser } from '../context/userContext';
 
 const Login = () => {
   const toast = useToast();
@@ -20,6 +22,11 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
+  const [{ user }] = useGetUser();
+
+  useEffect(() => {
+    if (user) history.push('/');
+  }, [user, history]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -37,15 +44,15 @@ const Login = () => {
         toast({
           title: 'Successfully LoggedIn',
           status: 'success',
-          duration: 5000,
+          duration: 2000,
           isClosable: true,
         });
       })
-      .catch((error) => {
+      .catch(() => {
         toast({
           title: 'Login fail, Try again',
           status: 'error',
-          duration: 5000,
+          duration: 2000,
           isClosable: true,
         });
       });
@@ -53,8 +60,11 @@ const Login = () => {
 
   return (
     <Box height="90vh" display="flex">
-      <Container height="fit-content" p="10" mt="5">
+      <Container height="fit-content" p="10">
         <FormControl id="email" isRequired my="6" isInvalid={errors.email}>
+          <Heading textAlign="center" color="gray.600" my="6" size="3xl">
+            Login
+          </Heading>
           <FormLabel>Email address</FormLabel>
           <Input
             type="email"
@@ -89,7 +99,7 @@ const Login = () => {
           onClick={handleSubmit}
           loadingText="Submitting"
         >
-          LogIn
+          Submit
         </Button>
       </Container>
     </Box>
