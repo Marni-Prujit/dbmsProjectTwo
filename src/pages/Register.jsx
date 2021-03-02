@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { validateEmailAndPassword } from '../utils/validators';
 import { useGetUser } from '../context/userContext';
 
@@ -23,6 +23,8 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
   const [errors, setErrors] = useState({});
 
   const [{ user }] = useGetUser();
@@ -33,51 +35,81 @@ const Register = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    console.log('asdf');
+    setIsLoading((isLoading) => !isLoading);
+    console.log('asdf-after');
 
-    const errors = validateEmailAndPassword(email, password);
+    let errors = validateEmailAndPassword(
+      email,
+      username,
+      password,
+      'register'
+    );
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
+      setIsLoading(false);
       return;
     }
 
-    // auth
-    //   .createUserWithEmailAndPassword(email, password)
-    //   .then((userCredential) => {
-    //     // Signed in
-    //     // const user = userCredential.user;
-    //     toast({
-    //       title: 'Account created.',
-    //       description: "We've created your account for you.",
-    //       status: 'success',
-    //       duration: 5000,
-    //       isClosable: true,
-    //     });
-    //     history.push('/');
-    //   })
-    //   .catch((error) => {
-    //     // const errorCode = error.code;
-    //     // const errorMessage = error.message
-    //     toast({
-    //       title: 'Registration failed, try again',
-    //       status: 'error',
-    //       duration: 5000,
-    //       isClosable: true,
-    //     });
-    //   });
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        // Signed in
+        const user = userCredential.user;
+
+        db.collection('users')
+          .doc(user.uid)
+          .set({ username, email })
+          .then((docRef) => {
+            console.log('firestore is filled');
+          })
+          .catch((err) => {
+            console.log(err.message);
+            console.log('was not recorded in firestore');
+          });
+
+        toast({
+          title: 'Account created.',
+          description: "We've created your account for you.",
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        history.push('/');
+      })
+      .catch((error) => {
+        // const errorCode = error.code;
+        // const errorMessage = error.message
+        toast({
+          title: 'Registration failed, try again',
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      });
+
+    setIsLoading((isLoading) => !isLoading);
   };
+
+  console.log(isLoading);
 
   return (
     <Box height="90vh" display="flex">
       <Container height="fit-content" p="10">
-        <Heading textAlign="center" color="gray.600" my="6" size="3xl">
+        <Heading textAlign="center" color="gray.600" my="5" size="3xl">
           SignUp
         </Heading>
 
-        <FormControl id="username" isRequired my="6">
+        <FormControl
+          id="username"
+          isRequired
+          my="6"
+          isInvalid={errors.username}
+        >
           <FormLabel>Username</FormLabel>
           <Input
             type="text"
-            size="lg"
+            size="md"
             name="username"
             placeholder="Username"
             borderColor="blackAlpha.400"
@@ -85,13 +117,14 @@ const Register = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
+          <FormErrorMessage>{errors?.username}</FormErrorMessage>
         </FormControl>
 
-        <FormControl id="email" isRequired my="6" isInvalid={errors.email}>
+        <FormControl id="email" isRequired my="5" isInvalid={errors.email}>
           <FormLabel>Email address</FormLabel>
           <Input
             type="email"
-            size="lg"
+            size="md"
             value={email}
             name="email"
             placeholder="jhon@gmail.com"
@@ -102,11 +135,11 @@ const Register = () => {
           <FormErrorMessage>{errors?.email}</FormErrorMessage>
         </FormControl>
 
-        <FormControl id="email" isRequired my="6" isInvalid={errors.password}>
+        <FormControl id="email" isRequired my="5" isInvalid={errors.password}>
           <FormLabel>Password</FormLabel>
           <Input
             type="password"
-            size="lg"
+            size="md"
             value={password}
             name="password"
             placeholder="Your Password"
@@ -120,6 +153,7 @@ const Register = () => {
           colorScheme="teal"
           variant="solid"
           onClick={handleSubmit}
+          isLoading={isLoading}
           loadingText="Submitting"
         >
           Submit
