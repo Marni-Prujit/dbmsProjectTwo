@@ -19,6 +19,8 @@ import { useGetUser } from '../context/userContext';
 const Register = () => {
   const toast = useToast();
   const history = useHistory();
+
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState({});
@@ -38,30 +40,30 @@ const Register = () => {
       return;
     }
 
-    auth
-      .createUserWithEmailAndPassword(email, password)
-      .then((userCredential) => {
-        // Signed in
-        // const user = userCredential.user;
-        toast({
-          title: 'Account created.',
-          description: "We've created your account for you.",
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-        history.push('/');
-      })
-      .catch((error) => {
-        // const errorCode = error.code;
-        // const errorMessage = error.message
-        toast({
-          title: 'Registration failed, try again',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-      });
+    // auth
+    //   .createUserWithEmailAndPassword(email, password)
+    //   .then((userCredential) => {
+    //     // Signed in
+    //     // const user = userCredential.user;
+    //     toast({
+    //       title: 'Account created.',
+    //       description: "We've created your account for you.",
+    //       status: 'success',
+    //       duration: 5000,
+    //       isClosable: true,
+    //     });
+    //     history.push('/');
+    //   })
+    //   .catch((error) => {
+    //     // const errorCode = error.code;
+    //     // const errorMessage = error.message
+    //     toast({
+    //       title: 'Registration failed, try again',
+    //       status: 'error',
+    //       duration: 5000,
+    //       isClosable: true,
+    //     });
+    //   });
   };
 
   return (
@@ -70,6 +72,21 @@ const Register = () => {
         <Heading textAlign="center" color="gray.600" my="6" size="3xl">
           SignUp
         </Heading>
+
+        <FormControl id="username" isRequired my="6">
+          <FormLabel>Username</FormLabel>
+          <Input
+            type="text"
+            size="lg"
+            name="username"
+            placeholder="Username"
+            borderColor="blackAlpha.400"
+            errorBorderColor="red.500"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </FormControl>
+
         <FormControl id="email" isRequired my="6" isInvalid={errors.email}>
           <FormLabel>Email address</FormLabel>
           <Input

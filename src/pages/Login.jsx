@@ -31,7 +31,7 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const errors = validateEmailAndPassword(email, password);
+    const errors = validateEmailAndPassword(email, '*', password, 'login');
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
       return;
@@ -48,13 +48,24 @@ const Login = () => {
           isClosable: true,
         });
       })
-      .catch(() => {
-        toast({
-          title: 'Login fail, Try again',
-          status: 'error',
-          duration: 2000,
-          isClosable: true,
-        });
+      .catch((err) => {
+        if (err.code === 'auth/user-not-found') {
+          toast({
+            title: 'User not found',
+            description: 'Click on SignUp for creating a new account',
+            status: 'error',
+            duration: 2000,
+            isClosable: true,
+          });
+        }
+        if (err.code === 'auth/wrong-password') {
+          toast({
+            title: 'Wrong password',
+            status: 'error',
+            duration: 2000,
+            isClosable: true,
+          });
+        }
       });
   };
 
