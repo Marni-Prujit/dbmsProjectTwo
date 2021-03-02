@@ -32,7 +32,12 @@ const Navbar = () => {
     <Box bg="blackAlpha.100">
       <Flex width="90%" margin="auto">
         <Box p="2">
-          <Heading size="lg" color="orange.400" as={Link} to="/">
+          <Heading
+            size="lg"
+            color="orange.400"
+            as={Link}
+            to={isAuthenticated ? '/dashboard' : '/'}
+          >
             DBMS
           </Heading>
         </Box>
@@ -55,6 +60,9 @@ const Navbar = () => {
             </>
           ) : (
             <>
+              <Button colorScheme="teal" as={Link} to="/dashboard" mr="2">
+                Dashboard
+              </Button>
               <Button colorScheme="teal" onClick={handleLogout}>
                 Logout
               </Button>

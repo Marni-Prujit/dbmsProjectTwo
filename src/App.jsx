@@ -6,7 +6,9 @@ import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
 import { useGetUser } from './context/userContext';
+import PrivateRoute from './components/PrivateRoute';
 
 const App = () => {
   const [, dispatch] = useGetUser();
@@ -35,6 +37,7 @@ const App = () => {
         <Route path="/" exact component={Home} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
+        <PrivateRoute path="/dashboard" component={Dashboard} />
       </Switch>
     </div>
   );
