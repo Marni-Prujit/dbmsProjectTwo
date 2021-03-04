@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import NavBar from './components/NavBar';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
+import DashBoard from './pages/DashBoard';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/" component={Home} exact />
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
+          <Route path="/dashboard" component={DashBoard} />
         </Box>
       </Switch>
     </>

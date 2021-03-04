@@ -8,6 +8,7 @@ const NavLinks = () => {
   return (
     <Stack direction={{ base: 'column', sm: 'row' }}>
       <NavLink text="LogIn" to="/login" />
+      <NavLink text="Dashboard" to="/dashboard" />
       <Button colorScheme="teal" as={Link} to="/signup">
         SignUp
       </Button>
