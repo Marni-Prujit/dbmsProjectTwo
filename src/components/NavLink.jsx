@@ -12,6 +12,8 @@ const NavLink = ({ to = '/', text, ...props }) => {
       to={to}
       textAlign="center"
       {...props}
+      display="flex"
+      alignItems="center"
     >
       {text}
     </Box>
