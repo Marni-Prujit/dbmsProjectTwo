@@ -9,10 +9,10 @@ const DashBoardCard = (props) => {
         boxShadow: 'xl',
       }}
       bg="blackAlpha.100"
-      w={['100%', '100%', '40%', '35%']}
+      w={['100%', '100%', '40%', '30%']}
       h="50%"
       m="4"
-      p="2"
+      py="12"
       borderRadius="md"
       flexDirection="column"
       justifyContent="center"
