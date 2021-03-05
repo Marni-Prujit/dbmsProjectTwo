@@ -1,15 +1,31 @@
 import React from 'react';
 import {
   Box,
-  Input,
   Text,
-  InputGroup,
-  InputRightElement,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  useClipboard,
   IconButton,
 } from '@chakra-ui/react';
-import { FiSend } from 'react-icons/fi';
+import { FaRegCopy } from 'react-icons/fa';
+import { BsFillGearFill } from 'react-icons/bs';
+import { BiExit } from 'react-icons/bi';
 
-const RoomRight = () => {
+import RoomChatInput from './RoomChatInput';
+import Message from './Message';
+
+const msgs = [
+  'as usual',
+  'Excellent!, what about you ?',
+  'Hey Raj, how is it going Dude!',
+  'Hi, Elon',
+];
+
+const RoomRight = ({ roomName }) => {
+  const { hasCopied, onCopy } = useClipboard(roomName);
+
   return (
     <Box h="100%" width="70%" borderRight="1px" borderColor="blackAlpha.200">
       <Box
@@ -18,33 +34,46 @@ const RoomRight = () => {
         h="8%"
         borderBottom="1px"
         borderColor="blackAlpha.200"
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
       >
-        <Text fontSize="lg">Room Name</Text>
+        <Text fontSize="lg">{roomName}</Text>
+        <Menu>
+          <MenuButton
+            as={IconButton}
+            aria-label="Options"
+            icon={
+              <BsFillGearFill style={{ color: 'teal', fontSize: '1.5rem' }} />
+            }
+            size="lg"
+            variant="ghost"
+            _hover={{
+              bg: 'transparent',
+            }}
+          />
+          <MenuList>
+            <MenuItem onClick={onCopy} icon={<FaRegCopy />}>
+              {hasCopied ? 'Copied' : 'Copy Room Id'}
+            </MenuItem>
+            <MenuItem icon={<BiExit />}>Leave Room</MenuItem>
+          </MenuList>
+        </Menu>
       </Box>
+
       <Box h="92%">
-        <Box h="90%" overflowY="scroll"></Box>
-        <Box h="10%" display="flex" alignItems="center" justifyContent="center">
-          <Box w="94%">
-            <InputGroup size="md">
-              <Input
-                variant="filled"
-                placeholder="Message..."
-                py="1"
-                size="md"
-              />
-              <InputRightElement width="4.5rem">
-                <IconButton
-                  size="sm"
-                  aria-label="Search database"
-                  variant="unstyled"
-                  icon={
-                    <FiSend style={{ fontSize: '1.75em', color: 'teal' }} />
-                  }
-                />
-              </InputRightElement>
-            </InputGroup>
-          </Box>
+        <Box
+          h="90%"
+          overflowY="scroll"
+          px="3"
+          display="flex"
+          flexDirection="column-reverse"
+        >
+          {msgs.map((msg) => {
+            return <Message text={msg} isAuthUser />;
+          })}
         </Box>
+        <RoomChatInput />
       </Box>
     </Box>
   );

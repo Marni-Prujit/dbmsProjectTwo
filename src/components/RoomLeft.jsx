@@ -14,17 +14,7 @@ const RoomLeft = () => {
         <Text fontSize="lg">RoomMates</Text>
       </Box>
       <Box px="4" overflowY="scroll" h="92%">
-        <Text py="2">User 1</Text>
-        <Divider />
-        <Text py="2">User 1</Text>
-        <Divider />
-        <Text py="2">User 1</Text>
-        <Divider />
-        <Text py="2">User 1</Text>
-        <Divider />
-        <Text py="2">User 1</Text>
-        <Divider />
-        <Text py="2">User 1</Text>
+        <Text py="2">You</Text>
         <Divider />
       </Box>
     </Box>
