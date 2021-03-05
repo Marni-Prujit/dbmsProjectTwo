@@ -15,14 +15,14 @@ const Navbar = () => {
 
   return (
     <>
-      {showNav && (
+      {
         <Box bg="blackAlpha.100" py="3">
           <NavContainer>
             <NavLogo />
             <NavLinks />
           </NavContainer>
         </Box>
-      )}
+      }
     </>
   );
 };
