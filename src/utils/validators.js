@@ -3,7 +3,7 @@ export const validateInputs = (data) => {
   if (data.username.trim() === '') errors.username = 'Username cannot be empty';
   if (data.email.trim() === '') errors.email = 'Email cannot be empty';
 
-  var reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
+  var reg = /^([A-Za-z0-9_\-.])+@([A-Za-z0-9_\-.])+\.([A-Za-z]{2,4})$/;
   if (reg.test(data.email) === false) {
     errors.email = 'Invalid email';
   }
