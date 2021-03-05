@@ -7,9 +7,12 @@ import {
   Text,
   Button,
 } from '@chakra-ui/react';
+import { useHistory } from 'react-router-dom';
+
 import { useAuth } from '../contexts/AuthContext';
 
 const Signup = () => {
+  const history = useHistory();
   const [data, setData] = useState({ username: '', email: '', password: '' });
   // const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
@@ -26,7 +29,7 @@ const Signup = () => {
     try {
       setLoading(true);
       await signup(data.email, data.password);
-      console.log('signup completed');
+      history.push('/dashboard');
     } catch (error) {
       console.log('error in createing user');
     }
@@ -35,7 +38,6 @@ const Signup = () => {
 
   return (
     <Box w={{ base: '100%', md: '40%' }} margin="auto" pt="10">
-      <Text>{currentUser.email}</Text>
       <Text
         fontSize="4xl"
         color="teal.600"

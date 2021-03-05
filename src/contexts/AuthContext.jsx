@@ -20,7 +20,10 @@ export const AuthProvider = ({ children }) => {
   const signup = (email, password) =>
     auth.createUserWithEmailAndPassword(email, password);
 
-  const value = { currentUser, signup };
+  const login = (email, password) =>
+    auth.signInWithEmailAndPassword(email, password);
+
+  const value = { currentUser, signup, login };
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
