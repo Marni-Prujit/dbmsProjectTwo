@@ -7,13 +7,16 @@ import {
   Text,
   Button,
   FormErrorMessage,
+  useToast,
 } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
 import { validateInputs } from '../utils/validators';
+import { db } from '../firebase';
 
 const Signup = () => {
+  const toast = useToast();
   const history = useHistory();
   const [data, setData] = useState({ username: '', email: '', password: '' });
   const [errors, setErrors] = useState({});
@@ -38,15 +41,40 @@ const Signup = () => {
     try {
       setErrors({});
       setLoading(true);
-      await signup(data.email, data.password);
+
+      const qs = await db
+        .collection('users')
+        .where('username', '==', data.username)
+        .limit(1)
+        .get();
+
+      if (!qs.empty) {
+        setLoading(false);
+        return setErrors({ ...errors, username: 'Username is taken' });
+      }
+
+      const user = await signup(data.email, data.password);
+
+      db.collection('users')
+        .doc(user.uid)
+        .set({ email: data.email, username: data.username })
+        .then(() => console.log('recorded in firestore'))
+        .catch(() =>
+          console.log('error in recording signup info to firestore')
+        );
+
+      toast({
+        title: 'Account created.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
       history.push('/dashboard');
     } catch (err) {
       console.log(err.code);
       console.log(err.message);
       if (err.code === 'auth/email-already-in-use')
         setErrors({ ...errors, email: err.message });
-
-      console.log('error in createing user');
     }
     setLoading(false);
   };
