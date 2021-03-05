@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -16,10 +16,15 @@ const Login = () => {
   const [data, setData] = useState({ email: '', password: '' });
   // const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const { login } = useAuth();
+  const { login, currentUser } = useAuth();
+
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    if (currentUser) history.push('/dashboard');
+  }, [currentUser, history]);
 
   const handleLogin = async (e) => {
     e.preventDefault();

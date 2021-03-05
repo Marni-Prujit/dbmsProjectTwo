@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -6,31 +6,46 @@ import {
   Box,
   Text,
   Button,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
 
 import { useAuth } from '../contexts/AuthContext';
+import { validateInputs } from '../utils/validators';
 
 const Signup = () => {
   const history = useHistory();
   const [data, setData] = useState({ username: '', email: '', password: '' });
-  // const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const { signup, currentUser } = useAuth();
+
   const handleChange = (e) => {
     setData({ ...data, [e.target.name]: e.target.value });
   };
 
-  console.log(currentUser);
+  useEffect(() => {
+    if (currentUser) history.push('/dashboard');
+  }, [currentUser, history]);
 
   const handleSignUp = async (e) => {
-    console.log(data);
     e.preventDefault();
+
+    const validationErrors = validateInputs(data);
+    if (Object.keys(validationErrors).length > 0)
+      return setErrors(validationErrors);
+
     try {
+      setErrors({});
       setLoading(true);
       await signup(data.email, data.password);
       history.push('/dashboard');
-    } catch (error) {
+    } catch (err) {
+      console.log(err.code);
+      console.log(err.message);
+      if (err.code === 'auth/email-already-in-use')
+        setErrors({ ...errors, email: err.message });
+
       console.log('error in createing user');
     }
     setLoading(false);
@@ -47,7 +62,7 @@ const Signup = () => {
         SignUp
       </Text>
 
-      <FormControl id="username" my="4" isRequired>
+      <FormControl id="username" my="4" isRequired isInvalid={errors.username}>
         <FormLabel>Username</FormLabel>
         <Input
           type="text"
@@ -55,9 +70,10 @@ const Signup = () => {
           value={data.username}
           onChange={handleChange}
         />
+        <FormErrorMessage>{errors.username}</FormErrorMessage>
       </FormControl>
 
-      <FormControl id="email" my="4" isRequired>
+      <FormControl id="email" my="4" isRequired isInvalid={errors.email}>
         <FormLabel>Email address</FormLabel>
         <Input
           type="email"
@@ -65,9 +81,10 @@ const Signup = () => {
           value={data.email}
           onChange={handleChange}
         />
+        <FormErrorMessage>{errors.email}</FormErrorMessage>
       </FormControl>
 
-      <FormControl id="password" my="4" isRequired>
+      <FormControl id="password" my="4" isRequired isInvalid={errors.password}>
         <FormLabel>Password</FormLabel>
         <Input
           type="password"
@@ -75,6 +92,7 @@ const Signup = () => {
           value={data.password}
           onChange={handleChange}
         />
+        <FormErrorMessage>{errors.password}</FormErrorMessage>
       </FormControl>
 
       <Button
