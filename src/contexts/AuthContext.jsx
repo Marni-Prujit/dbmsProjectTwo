@@ -23,7 +23,9 @@ export const AuthProvider = ({ children }) => {
   const login = (email, password) =>
     auth.signInWithEmailAndPassword(email, password);
 
-  const value = { currentUser, signup, login };
+  const logout = () => auth.signOut();
+
+  const value = { currentUser, signup, login, logout };
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
