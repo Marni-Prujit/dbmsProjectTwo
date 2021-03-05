@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import DashBoard from './pages/DashBoard';
 import PrivateRoute from './components/PrivateRoute';
+import Room from './pages/Room';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/signup" component={Signup} />
           <PrivateRoute path="/dashboard" component={DashBoard} />
+          <Route path="/room/:id" component={Room} />
         </Box>
       </Switch>
     </>

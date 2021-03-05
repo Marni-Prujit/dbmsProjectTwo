@@ -2,17 +2,17 @@ import React from 'react';
 import {
   Box,
   Flex,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
+  // Tabs,
+  // TabList,
+  // TabPanels,
+  // Tab,
+  // TabPanel,
   useDisclosure,
 } from '@chakra-ui/react';
 import { FaPlus } from 'react-icons/fa';
 import { ImEnter } from 'react-icons/im';
 import DashBoardCard from '../components/DashBoardCard';
-import YourRooms from '../components/YourRooms';
+// import YourRooms from '../components/YourRooms';
 import CreateRoomModel from '../components/CreateRoomModel';
 import JoinRoomModel from '../components/JoinRoomModel';
 
@@ -60,7 +60,7 @@ const DashBoard = () => {
         />
       </Flex>
       <Box mt="4">
-        <Tabs colorScheme="teal">
+        {/* <Tabs colorScheme="teal">
           <TabList>
             <Tab>Your Rooms</Tab>
             <Tab>Active Rooms</Tab>
@@ -70,7 +70,7 @@ const DashBoard = () => {
               <YourRooms />
             </TabPanel>
           </TabPanels>
-        </Tabs>
+        </Tabs> */}
       </Box>
     </Box>
   );

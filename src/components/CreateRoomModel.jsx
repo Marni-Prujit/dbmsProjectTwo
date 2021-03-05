@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Modal,
@@ -13,8 +13,30 @@ import {
   FormLabel,
   Input,
 } from '@chakra-ui/react';
+import { db } from '../firebase';
+import { useHistory } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 const CreateRoomModel = ({ isOpen, onClose, firstField }) => {
+  const history = useHistory();
+  const [data, setData] = useState({ roomName: '' });
+  const [loading, setLoading] = useState(false);
+  const { currentUser } = useAuth();
+
+  const createRoom = async () => {
+    setLoading((loading) => !loading);
+    const roomData = { roomName: data.roomName, admin: currentUser.email };
+    try {
+      const room = await db.collection('rooms').add(roomData);
+      history.push(`/room/${room.id}`);
+    } catch (err) {
+      console.log('error in creating a room');
+    }
+
+    setLoading((loading) => !loading);
+    onClose();
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -34,6 +56,8 @@ const CreateRoomModel = ({ isOpen, onClose, firstField }) => {
                 ref={firstField}
                 id="roomname"
                 placeholder="Enter the room name"
+                value={data.roomName}
+                onChange={(e) => setData({ ...data, roomName: e.target.value })}
               />
             </Box>
           </Stack>
@@ -43,7 +67,13 @@ const CreateRoomModel = ({ isOpen, onClose, firstField }) => {
           <Button colorScheme="red" mr={3} onClick={onClose} variant="outline">
             Close
           </Button>
-          <Button variant="solid" colorScheme="green">
+          <Button
+            variant="solid"
+            colorScheme="green"
+            onClick={createRoom}
+            isLoading={loading}
+            loadingText="Creating..."
+          >
             Create
           </Button>
         </ModalFooter>
