@@ -1,22 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Flex,
-  // Tabs,
-  // TabList,
-  // TabPanels,
-  // Tab,
-  // TabPanel,
+  Tabs,
+  TabList,
+  TabPanels,
+  Tab,
+  TabPanel,
   useDisclosure,
+  Text,
 } from '@chakra-ui/react';
 import { FaPlus } from 'react-icons/fa';
 import { ImEnter } from 'react-icons/im';
+
 import DashBoardCard from '../components/DashBoardCard';
-// import YourRooms from '../components/YourRooms';
 import CreateRoomModel from '../components/CreateRoomModel';
 import JoinRoomModel from '../components/JoinRoomModel';
+import DashBoardUserRoomCard from '../components/DashBoardUserRoomCard';
+import { db } from '../firebase';
+import { useAuth } from '../contexts/AuthContext';
 
 const DashBoard = () => {
+  const { currentUser } = useAuth();
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
   const {
     isOpen: isOpen1,
     onOpen: onOpen1,
@@ -27,8 +34,25 @@ const DashBoard = () => {
     onOpen: onOpen2,
     onClose: onClose2,
   } = useDisclosure();
-  const firstField1 = React.useRef();
-  const firstField2 = React.useRef();
+
+  useEffect(() => {
+    const rooms = [];
+    const unsub = db
+      .collection('rooms')
+      .where('admin', '==', currentUser.displayName)
+      .get()
+      .then((qs) => {
+        qs.docs.forEach((room) => {
+          rooms.push({ roomId: room.id, ...room.data() });
+        });
+        setRooms(rooms);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+    return unsub;
+  }, [currentUser]);
 
   return (
     <Box p="5">
@@ -42,35 +66,38 @@ const DashBoard = () => {
           icon={<FaPlus style={{ fontSize: '2em', color: 'teal' }} />}
           onClick={onOpen1}
         />
-        <CreateRoomModel
-          isOpen={isOpen1}
-          onClose={onClose1}
-          firstField={firstField1}
-        />
+        <CreateRoomModel isOpen={isOpen1} onClose={onClose1} />
 
         <DashBoardCard
           title="Join a room"
           icon={<ImEnter style={{ fontSize: '2em', color: 'teal' }} />}
           onClick={onOpen2}
         />
-        <JoinRoomModel
-          isOpen={isOpen2}
-          onClose={onClose2}
-          firstField={firstField2}
-        />
+        <JoinRoomModel isOpen={isOpen2} onClose={onClose2} />
       </Flex>
       <Box mt="4">
-        {/* <Tabs colorScheme="teal">
+        <Tabs colorScheme="teal">
           <TabList>
-            <Tab>Your Rooms</Tab>
-            <Tab>Active Rooms</Tab>
+            <Tab>My Rooms</Tab>
           </TabList>
           <TabPanels>
             <TabPanel px="0">
-              <YourRooms />
+              {rooms.length > 0 && !loading ? (
+                rooms.map((room) => (
+                  <DashBoardUserRoomCard
+                    roomName={room.roomName}
+                    roomId={room.roomId}
+                    key={room.roomId}
+                  />
+                ))
+              ) : rooms.length === 0 && loading ? (
+                <Text color="gray.500">Loading...</Text>
+              ) : (
+                <Text fontSize="xl">You don't own any rooms</Text>
+              )}
             </TabPanel>
           </TabPanels>
-        </Tabs> */}
+        </Tabs>
       </Box>
     </Box>
   );

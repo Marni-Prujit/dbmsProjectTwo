@@ -54,6 +54,8 @@ const Signup = () => {
       }
 
       const user = await signup(data.email, data.password);
+      user.user.updateProfile({ displayName: data.username });
+      console.log(user);
 
       db.collection('users')
         .doc(user.uid)

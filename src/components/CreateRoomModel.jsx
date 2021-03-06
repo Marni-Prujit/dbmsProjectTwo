@@ -12,6 +12,7 @@ import {
   Stack,
   FormLabel,
   Input,
+  useToast,
 } from '@chakra-ui/react';
 import { db } from '../firebase';
 import { useHistory } from 'react-router-dom';
@@ -19,18 +20,36 @@ import { useAuth } from '../contexts/AuthContext';
 
 const CreateRoomModel = ({ isOpen, onClose, firstField }) => {
   const history = useHistory();
+  const toast = useToast();
   const [data, setData] = useState({ roomName: '' });
   const [loading, setLoading] = useState(false);
   const { currentUser } = useAuth();
 
   const createRoom = async () => {
     setLoading((loading) => !loading);
-    const roomData = { roomName: data.roomName, admin: currentUser.email };
+    const roomData = {
+      roomName: data.roomName,
+      admin: currentUser.displayName,
+    };
     try {
       const room = await db.collection('rooms').add(roomData);
+      await db
+        .collection('rooms')
+        .doc(room.id)
+        .collection('roomMates')
+        .doc(currentUser.uid)
+        .set({ username: currentUser.displayName });
+
+      toast({
+        title: 'Joined room',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+
       history.push(`/room/${room.id}`);
     } catch (err) {
-      console.log('error in creating a room');
+      console.log('error in creating a room or joining a room');
     }
 
     setLoading((loading) => !loading);

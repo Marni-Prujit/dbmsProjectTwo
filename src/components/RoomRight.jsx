@@ -23,8 +23,8 @@ const msgs = [
   'Hi, Elon',
 ];
 
-const RoomRight = ({ roomName }) => {
-  const { hasCopied, onCopy } = useClipboard(roomName);
+const RoomRight = ({ roomName, roomId }) => {
+  const { hasCopied, onCopy } = useClipboard(roomId);
 
   return (
     <Box h="100%" width="70%" borderRight="1px" borderColor="blackAlpha.200">
@@ -70,7 +70,13 @@ const RoomRight = ({ roomName }) => {
           flexDirection="column-reverse"
         >
           {msgs.map((msg) => {
-            return <Message text={msg} isAuthUser />;
+            return (
+              <Message
+                text={msg}
+                isAuthUser
+                key={Math.floor(Math.random() * 99999)}
+              />
+            );
           })}
         </Box>
         <RoomChatInput />

@@ -1,9 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { Box, Flex } from '@chakra-ui/react';
 import RoomLeft from '../components/RoomLeft';
 import RoomRight from '../components/RoomRight';
+import { db } from '../firebase';
 
 const Room = () => {
+  const { id } = useParams();
+  const [room, setRoom] = useState({});
+
+  useEffect(() => {
+    db.collection('rooms')
+      .doc(id)
+      .get()
+      .then((qs) => {
+        setRoom(qs.data());
+      });
+  }, [id]);
+
+  useEffect(() => {}, []);
+
+  if (Object.keys(room).length === 0) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <Box h="91vh" display="flex" alignItems="center">
       <Flex
@@ -15,7 +35,7 @@ const Room = () => {
         borderColor="blackAlpha.200"
       >
         <RoomLeft />
-        <RoomRight />
+        <RoomRight roomName={room.roomName} roomId={id} />
       </Flex>
     </Box>
   );

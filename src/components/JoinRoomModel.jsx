@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Modal,
@@ -12,9 +12,61 @@ import {
   Stack,
   FormLabel,
   Input,
+  useToast,
 } from '@chakra-ui/react';
+import { useHistory } from 'react-router-dom';
 
-const JoinRoomModel = ({ isOpen, onClose, firstField }) => {
+import { db } from '../firebase';
+import { useAuth } from '../contexts/AuthContext';
+
+const JoinRoomModel = ({ isOpen, onClose }) => {
+  const toast = useToast();
+  const history = useHistory();
+  const [roomId, setRoomId] = useState('');
+  const { currentUser } = useAuth();
+
+  const handleJoinRoom = async () => {
+    try {
+      const roomMatesQS = await db
+        .collection('rooms')
+        .doc(roomId)
+        .collection('roomMates')
+        .where('username', '==', currentUser.displayName)
+        .get();
+
+      if (!roomMatesQS.empty) {
+        toast({
+          title: 'Already in room',
+          status: 'error',
+          duration: 3000,
+          isClosable: true,
+        });
+        return onClose();
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+
+    try {
+      await db
+        .collection('rooms')
+        .doc(roomId)
+        .collection('roomMates')
+        .doc(currentUser.uid)
+        .set({ username: currentUser.displayName });
+
+      history.push(`/room/${roomId}`);
+      toast({
+        title: 'Joined room',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (err) {
+      console.log('error in joining room');
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -30,7 +82,12 @@ const JoinRoomModel = ({ isOpen, onClose, firstField }) => {
           <Stack spacing="24px">
             <Box>
               <FormLabel htmlFor="roomid">Room Id</FormLabel>
-              <Input ref={firstField} id="roomid" placeholder="Enter Room Id" />
+              <Input
+                id="roomid"
+                placeholder="Enter Room Id"
+                value={roomId}
+                onChange={(e) => setRoomId(e.target.value)}
+              />
             </Box>
           </Stack>
         </ModalBody>
@@ -39,7 +96,7 @@ const JoinRoomModel = ({ isOpen, onClose, firstField }) => {
           <Button colorScheme="red" mr={3} onClick={onClose} variant="outline">
             Close
           </Button>
-          <Button variant="solid" colorScheme="green">
+          <Button variant="solid" colorScheme="green" onClick={handleJoinRoom}>
             Join
           </Button>
         </ModalFooter>
