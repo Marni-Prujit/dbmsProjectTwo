@@ -1,7 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Text, Divider } from '@chakra-ui/react';
+import { db } from '../firebase';
 
-const RoomLeft = () => {
+const RoomLeft = ({ roomId }) => {
+  const [roomMates, setRoomMates] = useState([]);
+  useEffect(() => {
+    const unsub = db
+      .collection('rooms')
+      .doc(roomId)
+      .collection('roomMates')
+      .onSnapshot((qs) => {
+        let mates = [];
+        mates = qs.docs.map((doc) => ({
+          uid: doc.id,
+          username: doc.data().username,
+        }));
+        setRoomMates(mates);
+      });
+
+    return () => {
+      unsub();
+    };
+  }, [roomId]);
+
   return (
     <Box h="100%" width="30%" borderRight="1px" borderColor="blackAlpha.200">
       <Box
@@ -14,8 +35,17 @@ const RoomLeft = () => {
         <Text fontSize="lg">RoomMates</Text>
       </Box>
       <Box px="4" overflowY="scroll" h="92%">
-        <Text py="2">You</Text>
-        <Divider />
+        {roomMates.length > 0 &&
+          roomMates.map((mate) => {
+            return (
+              <div key={mate.uid}>
+                <Box key={mate.uid} py="2" d="flex" flexDirection="column">
+                  <Text>{mate.username}</Text>
+                </Box>
+                <Divider />
+              </div>
+            );
+          })}
       </Box>
     </Box>
   );

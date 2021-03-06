@@ -26,6 +26,7 @@ const JoinRoomModel = ({ isOpen, onClose }) => {
   const { currentUser } = useAuth();
 
   const handleJoinRoom = async () => {
+    //? THIS TRY CHEKS IF YOU ARE ALREADY IN ROOM
     try {
       const roomMatesQS = await db
         .collection('rooms')
@@ -46,7 +47,7 @@ const JoinRoomModel = ({ isOpen, onClose }) => {
     } catch (err) {
       console.log(err.message);
     }
-
+    // ? ADDS YOU TO ROOMMATES COLLECTIONS OF THE ROOM
     try {
       await db
         .collection('rooms')

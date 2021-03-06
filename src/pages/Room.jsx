@@ -34,7 +34,7 @@ const Room = () => {
         borderRadius="3px"
         borderColor="blackAlpha.200"
       >
-        <RoomLeft />
+        <RoomLeft roomId={id} />
         <RoomRight roomName={room.roomName} roomId={id} />
       </Flex>
     </Box>
