@@ -15,6 +15,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { useHistory } from 'react-router-dom';
+import firebase from 'firebase';
 
 import { db } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
@@ -23,7 +24,7 @@ const JoinRoomModel = ({ isOpen, onClose }) => {
   const toast = useToast();
   const history = useHistory();
   const [roomId, setRoomId] = useState('');
-  const { currentUser } = useAuth();
+  const { currentUser, authUserRef } = useAuth();
 
   const handleJoinRoom = async () => {
     //? THIS TRY CHEKS IF YOU ARE ALREADY IN ROOM
@@ -65,6 +66,15 @@ const JoinRoomModel = ({ isOpen, onClose }) => {
       });
     } catch (err) {
       console.log('error in joining room');
+    }
+
+    //? ADDS ACTIVE ROOM IN USER DOCUMENT
+    try {
+      await authUserRef.update({
+        activeRooms: firebase.firestore.FieldValue.arrayUnion(roomId),
+      });
+    } catch (err) {
+      console.log('error in adding active room to authenticated user');
     }
   };
 

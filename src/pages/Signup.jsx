@@ -53,9 +53,8 @@ const Signup = () => {
         return setErrors({ ...errors, username: 'Username is taken' });
       }
 
-      const user = await signup(data.email, data.password);
-      user.user.updateProfile({ displayName: data.username });
-      console.log(user);
+      const { user } = await signup(data.email, data.password);
+      user.updateProfile({ displayName: data.username });
 
       db.collection('users')
         .doc(user.uid)
