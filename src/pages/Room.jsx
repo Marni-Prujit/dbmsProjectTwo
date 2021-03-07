@@ -18,12 +18,6 @@ const Room = () => {
       });
   }, [id]);
 
-  useEffect(() => {}, []);
-
-  if (Object.keys(room).length === 0) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <Box h="91vh" display="flex" alignItems="center">
       <Flex
@@ -35,7 +29,11 @@ const Room = () => {
         borderColor="blackAlpha.200"
       >
         <RoomLeft roomId={id} />
-        <RoomRight roomName={room.roomName} roomId={id} />
+        <RoomRight
+          roomName={room.roomName}
+          roomId={id}
+          roomAdmin={room.admin}
+        />
       </Flex>
     </Box>
   );

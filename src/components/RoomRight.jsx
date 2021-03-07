@@ -8,10 +8,13 @@ import {
   MenuItem,
   useClipboard,
   IconButton,
+  useToast,
 } from '@chakra-ui/react';
+import { useHistory } from 'react-router-dom';
 import { FaRegCopy } from 'react-icons/fa';
 import { BsFillGearFill } from 'react-icons/bs';
 import { BiExit } from 'react-icons/bi';
+import { AiFillDelete } from 'react-icons/ai';
 
 import RoomChatInput from './RoomChatInput';
 import Message from './Message';
@@ -25,7 +28,9 @@ import { db } from '../firebase';
 //   'Hi, Elon',
 // ];
 
-const RoomRight = ({ roomName, roomId }) => {
+const RoomRight = ({ roomName, roomId, roomAdmin }) => {
+  const history = useHistory();
+  const toast = useToast();
   const { hasCopied, onCopy } = useClipboard(roomId);
   const [msgs, setMesgs] = useState([]);
 
@@ -45,6 +50,28 @@ const RoomRight = ({ roomName, roomId }) => {
       unsub();
     };
   }, [roomId]);
+
+  const handleLeaveRoom = async () => {
+    try {
+      await db
+        .collection('rooms')
+        .doc(roomId)
+        .collection('roomMates')
+        .doc(currentUser.uid)
+        .delete();
+
+      toast({
+        title: 'Exited',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+
+      history.push('/dashboard');
+    } catch (err) {
+      console.log('error deleting roomate');
+    }
+  };
 
   return (
     <Box h="100%" width="70%" borderRight="1px" borderColor="blackAlpha.200">
@@ -76,7 +103,20 @@ const RoomRight = ({ roomName, roomId }) => {
             <MenuItem onClick={onCopy} icon={<FaRegCopy />}>
               {hasCopied ? 'Copied' : 'Copy Room Id'}
             </MenuItem>
-            <MenuItem icon={<BiExit />}>Leave Room</MenuItem>
+            {currentUser.displayName !== roomAdmin && (
+              <MenuItem onClick={handleLeaveRoom} icon={<BiExit />}>
+                Leave Room
+              </MenuItem>
+            )}
+            {currentUser.displayName === roomAdmin && (
+              <MenuItem
+                color="red.500"
+                onClick={handleLeaveRoom}
+                icon={<AiFillDelete />}
+              >
+                Delete Room
+              </MenuItem>
+            )}
           </MenuList>
         </Menu>
       </Box>
