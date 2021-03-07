@@ -12,6 +12,7 @@ const NavLinks = () => {
     <Stack direction={{ base: 'column', sm: 'row' }}>
       {currentUser ? (
         <>
+          <NavLink text={currentUser.displayName} to="/" />
           <NavLink text="Dashboard" to="/dashboard" />
           <Button
             colorScheme="teal"

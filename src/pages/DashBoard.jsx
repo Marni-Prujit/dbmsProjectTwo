@@ -18,10 +18,8 @@ import CreateRoomModel from '../components/CreateRoomModel';
 import JoinRoomModel from '../components/JoinRoomModel';
 import DashBoardUserRoomCard from '../components/DashBoardUserRoomCard';
 import { db } from '../firebase';
-import { useAuth } from '../contexts/AuthContext';
 
 const DashBoard = () => {
-  const { currentUser } = useAuth();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const {
@@ -39,7 +37,6 @@ const DashBoard = () => {
     const rooms = [];
     const unsub = db
       .collection('rooms')
-      .where('admin', '==', currentUser.displayName)
       .get()
       .then((qs) => {
         qs.docs.forEach((room) => {
@@ -52,7 +49,7 @@ const DashBoard = () => {
         console.log(err.message);
       });
     return unsub;
-  }, [currentUser]);
+  }, []);
 
   return (
     <Box p="5">
@@ -87,13 +84,14 @@ const DashBoard = () => {
                   <DashBoardUserRoomCard
                     roomName={room.roomName}
                     roomId={room.roomId}
+                    roomAdmin={room.admin}
                     key={room.roomId}
                   />
                 ))
               ) : rooms.length === 0 && loading ? (
                 <Text color="gray.500">Loading...</Text>
               ) : (
-                <Text fontSize="xl">You don't own any rooms</Text>
+                <Text fontSize="xl">No rooms</Text>
               )}
             </TabPanel>
           </TabPanels>

@@ -25,7 +25,7 @@ const JoinRoomModel = ({ isOpen, onClose }) => {
   const [roomId, setRoomId] = useState('');
   const { currentUser } = useAuth();
 
-  const handleJoinRoom = async () => {
+  const handleJoinRoom = async (roomId) => {
     //? THIS TRY CHEKS IF YOU ARE ALREADY IN ROOM
     try {
       const roomMatesQS = await db
@@ -42,6 +42,7 @@ const JoinRoomModel = ({ isOpen, onClose }) => {
           duration: 3000,
           isClosable: true,
         });
+        history.push(`/room/${roomId}`);
         return onClose();
       }
     } catch (err) {
@@ -97,7 +98,11 @@ const JoinRoomModel = ({ isOpen, onClose }) => {
           <Button colorScheme="red" mr={3} onClick={onClose} variant="outline">
             Close
           </Button>
-          <Button variant="solid" colorScheme="green" onClick={handleJoinRoom}>
+          <Button
+            variant="solid"
+            colorScheme="green"
+            onClick={() => handleJoinRoom(roomId)}
+          >
             Join
           </Button>
         </ModalFooter>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Text,
@@ -15,16 +15,36 @@ import { BiExit } from 'react-icons/bi';
 
 import RoomChatInput from './RoomChatInput';
 import Message from './Message';
+import { useAuth } from '../contexts/AuthContext';
+import { db } from '../firebase';
 
-const msgs = [
-  'as usual',
-  'Excellent!, what about you ?',
-  'Hey Raj, how is it going Dude!',
-  'Hi, Elon',
-];
+// const msgs = [
+//   'as usual',
+//   'Excellent!, what about you ?',
+//   'Hey Raj, how is it going Dude!',
+//   'Hi, Elon',
+// ];
 
 const RoomRight = ({ roomName, roomId }) => {
   const { hasCopied, onCopy } = useClipboard(roomId);
+  const [msgs, setMesgs] = useState([]);
+
+  const { currentUser } = useAuth();
+
+  useEffect(() => {
+    const unsub = db
+      .collection('roomMessages')
+      .doc(roomId)
+      .collection('messages')
+      .orderBy('sentAt', 'desc')
+      .onSnapshot((qs) => {
+        setMesgs(qs.docs.map((doc) => doc.data()));
+      });
+
+    return () => {
+      unsub();
+    };
+  }, [roomId]);
 
   return (
     <Box h="100%" width="70%" borderRight="1px" borderColor="blackAlpha.200">
@@ -72,14 +92,14 @@ const RoomRight = ({ roomName, roomId }) => {
           {msgs.map((msg) => {
             return (
               <Message
-                text={msg}
-                isAuthUser
-                key={Math.floor(Math.random() * 99999)}
+                text={msg.msg}
+                isAuthUser={currentUser.displayName === msg.sender}
+                key={Math.floor(Math.random() * 99999999)}
               />
             );
           })}
         </Box>
-        <RoomChatInput />
+        <RoomChatInput roomId={roomId} sender={currentUser.displayName} />
       </Box>
     </Box>
   );
